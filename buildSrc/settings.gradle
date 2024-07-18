@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+plugins {
+    id 'com.gradle.develocity' version '3.17.2'
+    // adds additional metadata to build scans
+    id 'com.gradle.common-custom-user-data-gradle-plugin' version '2.0.2'
+}
+
 apply from: "settingsScripts/out-setup.groovy"
 getGradle().beforeProject { project ->
     init.chooseBuildDirectory(
@@ -48,5 +54,22 @@ dependencyResolutionManagement {
                 version('androidLint', lintOverride)
             }
         }
+    }
+}
+
+develocity {
+    server = "https://ge.solutions-team.gradle.com/"
+}
+
+buildCache {
+    local {
+        enabled = true
+    }
+
+    remote(develocity.buildCache) {
+        enabled = true
+        def isCi = System.getenv("CI") != null
+        def accessKey = System.getenv("DEVELOCITY_ACCESS_KEY")
+        push = isCi && accessKey != null && !accessKey.isEmpty()
     }
 }

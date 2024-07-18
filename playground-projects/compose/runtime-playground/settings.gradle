@@ -32,3 +32,16 @@ playground {
         return false
     })
 }
+
+buildCache {
+    local {
+        enabled = true
+    }
+
+    remote(develocity.buildCache) {
+        enabled = true
+        def isCi = System.getenv("CI") != null
+        def accessKey = System.getenv("DEVELOCITY_ACCESS_KEY")
+        push = isCi && accessKey != null && !accessKey.isEmpty()
+    }
+}

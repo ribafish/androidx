@@ -22,6 +22,7 @@ import java.util.function.Function
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 import org.gradle.caching.http.HttpBuildCache
+import com.gradle.develocity.agent.gradle.DevelocityConfiguration
 import org.gradle.kotlin.dsl.develocity
 
 class GradleDevelocityConventionsPlugin : Plugin<Settings> {
@@ -52,18 +53,23 @@ class GradleDevelocityConventionsPlugin : Plugin<Settings> {
             }
         }
 
-        settings.buildCache.remote(HttpBuildCache::class.java) { remote ->
-            remote.url = URI("https://ge.androidx.dev/cache/")
-            val buildCachePassword = System.getenv("GRADLE_BUILD_CACHE_PASSWORD")
-            if (isCI && !buildCachePassword.isNullOrEmpty()) {
-                remote.isPush = true
-                remote.credentials { credentials ->
-                    credentials.username = "ci"
-                    credentials.password = buildCachePassword
-                }
-            } else {
-                remote.isPush = false
-            }
+//        settings.buildCache.remote(HttpBuildCache::class.java) { remote ->
+//            remote.url = URI("https://ge.androidx.dev/cache/")
+//            val buildCachePassword = System.getenv("GRADLE_BUILD_CACHE_PASSWORD")
+//            if (isCI && !buildCachePassword.isNullOrEmpty()) {
+//                remote.isPush = true
+//                remote.credentials { credentials ->
+//                    credentials.username = "ci"
+//                    credentials.password = buildCachePassword
+//                }
+//            } else {
+//                remote.isPush = false
+//            }
+//        }
+        val develocity = settings.getExtensions().getByType(DevelocityConfiguration::class.java)
+        settings.buildCache.remote(develocity.getBuildCache()) { remote ->
+            remote.setEnabled(true)
+            remote.setPush(isCI)
         }
     }
 
