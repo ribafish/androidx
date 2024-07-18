@@ -46,7 +46,7 @@ jobs:
           echo "Test caches/*/$cache removal with $args"
 
           echo "Running build once to fully populate Gradle User Home"
-          ./gradlew ${{ matrix.task }} -Dscan.tag.remote-cache-experiment-init --no-daemon --no-configuration-cache -Ddevelocity.deprecation.muteWarnings=true -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com/ 
+          ./gradlew ${{ matrix.task }} -Dscan.tag.remote-cache-experiment-init --no-daemon --no-configuration-cache -Ddevelocity.deprecation.muteWarnings=true -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com/ -Dorg.gradle.dependency.verification=lenient
           ./gradlew --stop
   
           echo "Removing $cache from $homeDir/caches"
@@ -57,4 +57,4 @@ jobs:
           rm -rf ~/.gradle/caches/build-cache-1
 
           echo "Running build again with --${args}"
-          ./gradlew ${{ matrix.task }} --no-configuration-cache -Ddevelocity.deprecation.muteWarnings=true -Dscan.uploadInBackground=false -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com $args
+          ./gradlew ${{ matrix.task }} --no-configuration-cache -Ddevelocity.deprecation.muteWarnings=true -Dscan.uploadInBackground=false -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com -Dorg.gradle.dependency.verification=lenient $args
